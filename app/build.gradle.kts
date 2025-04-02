@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+
 }
 
 android {
@@ -68,4 +70,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
     implementation("androidx.lifecycle:lifecycle-common:2.8.3")
+    //Algolia
+    implementation ("com.algolia:instantsearch-android:3.1.2")
+    implementation ("com.algolia:instantsearch-android-paging3:3.0.0")
+    implementation ("com.algolia:instantsearch-android-loading:3.0.0")
+    implementation ("com.algolia:instantsearch-insights-android:3.1.3")
+
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+
 }

@@ -27,7 +27,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.algolia.instantsearch.core.Callback
+import com.algolia.search.helper.deserialize
+import com.algolia.search.model.response.ResponseSearch
+import com.example.composedemo.model.AlgoliaProduct
 import com.example.composedemo.utils.Status
+import com.example.composedemo.viewmodel.AlgoliaViewModel
 import com.example.composedemo.viewmodel.BannerViewModel
 import com.example.composedemo.viewmodel.ViewModelFactory
 import com.google.gson.Gson
@@ -38,6 +43,8 @@ import com.google.gson.Gson
 class MainActivity : ComponentActivity() {
 
     private lateinit var bannerViewModel: BannerViewModel
+    private lateinit var viewModel: AlgoliaViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +53,20 @@ class MainActivity : ComponentActivity() {
             this,
             ViewModelFactory()
         )[BannerViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AlgoliaViewModel::class.java]
+
+        viewModel.searcher.searchAsync()
+        val callback : Callback<ResponseSearch?> = { response ->
+
+            if (response?.nbHitsOrNull != null && response.nbHitsOrNull!! > 0) {
+
+                var x = response.hits.deserialize(AlgoliaProduct.serializer())
+                var y:List<AlgoliaProduct> = x
+            }
+        }
+        viewModel.searcher.response.subscribe(callback)
+
+
 
         getBannersContents()
 
@@ -58,7 +79,7 @@ class MainActivity : ComponentActivity() {
 
     fun getContents(): MutableList<String> {
         return mutableListOf<String>().apply {
-            add("site/homepage/banners")
+            add("'site/homepage/sliders/1-slider-system/3-file-name'")
         }
     }
 
