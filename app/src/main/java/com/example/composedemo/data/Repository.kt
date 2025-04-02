@@ -1,7 +1,9 @@
 package com.example.composedemo.data
 
-import com.example.composedemo.model.Banner
+import com.example.composedemo.model.MainContent
 import com.example.composedemo.model.Product
+import org.json.JSONArray
+import retrofit2.Response
 
 class Repository {
     private val apiService = RetrofitInstance.api
@@ -10,7 +12,7 @@ class Repository {
         return apiService.getProducts()
     }
 
-    suspend fun getBanners(): List<Banner> {
-        return apiService.getBanners()
+    suspend fun getBanners(banner: JSONArray): Response<MainContent.ApiResponse> {
+        return apiService.getBanners(banner)
     }
 }

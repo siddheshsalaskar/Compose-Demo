@@ -1,6 +1,7 @@
 package com.example.composedemo
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -24,22 +25,68 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.composedemo.utils.Status
+import com.example.composedemo.viewmodel.BannerViewModel
+import com.example.composedemo.viewmodel.ViewModelFactory
+import com.google.gson.Gson
+
 //import com.example.composedemo.ui.MainScreen
 //import com.example.composedemo.viewmodel.ProductViewModel
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var bannerViewModel: BannerViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        bannerViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory()
+        )[BannerViewModel::class.java]
+
+        getBannersContents()
+
         setContent {
             MainScreen()
 //            val viewModel: ProductViewModel = viewModel()
 //            MainScreen(viewModel)
         }
     }
+
+    fun getContents(): MutableList<String> {
+        return mutableListOf<String>().apply {
+            add("site/homepage/banners")
+        }
+    }
+
+    private fun getBannersContents() {
+        bannerViewModel.getNewContent(getContents()).observe(this) {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.LOADING -> {}
+                    Status.SUCCESS -> {
+                        if (resource?.data?.body() != null && resource?.data?.body()?.response?.data != null) {
+                        var response = resource?.data?.body()?.response
+
+                        }
+
+                    }
+
+                    Status.ERROR -> {
+                        Log.d("Error", resource.message.toString())
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 data class Product(val imageRes: Int, val category: String, val title: String, val price: String)
+
 
 @Composable
 fun MainScreen() {
