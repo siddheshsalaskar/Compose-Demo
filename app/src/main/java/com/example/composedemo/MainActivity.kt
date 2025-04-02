@@ -98,11 +98,11 @@ fun MainScreen() {
         item { NewArrivalsSection() }
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { ProductCarousel() }
-        item { BannerCarousel() }
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-        item { NewArrivalsSection() }
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-        item { ProductCarousel() }
+//        item { BannerCarousel() }
+//        item { Spacer(modifier = Modifier.height(16.dp)) }
+//        item { NewArrivalsSection() }
+//        item { Spacer(modifier = Modifier.height(16.dp)) }
+//        item { ProductCarousel() }
     }
 //    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
 //        BannerCarousel()
@@ -239,10 +239,10 @@ fun ProductCard(product: Product) {
 @Composable
 fun ProductCarousel() {
     val sampleProducts = listOf(
-        Product(R.drawable.tshirt, "COATS", "MAX MARA TEDDY CAPE - SIZE WOMENS S", "£650"),
+        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
         Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
         Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850"),
-        Product(R.drawable.tshirt, "COATS", "MAX MARA TEDDY CAPE - SIZE WOMENS S", "£650"),
+        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
         Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
         Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850")
     )
