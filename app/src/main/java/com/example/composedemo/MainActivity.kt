@@ -26,16 +26,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.algolia.instantsearch.core.Callback
 import com.algolia.search.helper.deserialize
 import com.algolia.search.model.response.ResponseSearch
 import com.example.composedemo.model.AlgoliaProduct
+import com.example.composedemo.model.Banner
+import com.example.composedemo.model.MainContent
 import com.example.composedemo.utils.Status
 import com.example.composedemo.viewmodel.AlgoliaViewModel
 import com.example.composedemo.viewmodel.BannerViewModel
 import com.example.composedemo.viewmodel.ViewModelFactory
-import com.google.gson.Gson
 
 //import com.example.composedemo.ui.MainScreen
 //import com.example.composedemo.viewmodel.ProductViewModel
@@ -79,7 +79,12 @@ class MainActivity : ComponentActivity() {
 
     fun getContents(): MutableList<String> {
         return mutableListOf<String>().apply {
-            add("'site/homepage/sliders/1-slider-system/3-file-name'")
+            add("site/homepage/sliders/1-slider-system/1-cta-url")
+            add("site/homepage/sliders/1-slider-system/2-cta-url")
+            add("site/homepage/sliders/1-slider-system/3-cta-url")
+            add("site/homepage/sliders/1-slider-system/1-file-name")
+            add("site/homepage/sliders/1-slider-system/2-file-name")
+            add("site/homepage/sliders/1-slider-system/3-file-name")
         }
     }
 
@@ -92,6 +97,8 @@ class MainActivity : ComponentActivity() {
                         if (resource?.data?.body() != null && resource?.data?.body()?.response?.data != null) {
                         var response = resource?.data?.body()?.response
 
+                            var contentList = response?.data?.contents
+                            val bannerList = getBannerListData(contentList)
                         }
 
                     }
@@ -104,6 +111,25 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+}
+
+fun getBannerListData(contentList: List<MainContent.ContentWrapper>?): MutableList<Banner> {
+    var bannerList:MutableList<Banner> = mutableListOf()
+    if (contentList != null) {
+        for (data in contentList) {
+            if(data.contentKey.contains("site/homepage/sliders/1-slider-system/1-file-name")) {
+                bannerList.add(Banner(data.content,data.contentKey))
+            }
+            if(data.contentKey.contains("site/homepage/sliders/1-slider-system/2-file-name")) {
+                bannerList.add(Banner(data.content,data.contentKey))
+            }
+            if(data.contentKey.contains("site/homepage/sliders/1-slider-system/3-file-name")) {
+                bannerList.add(Banner(data.content,data.contentKey))
+            }
+        }
+        return bannerList
+    }
+   return bannerList
 }
 
 data class Product(val imageRes: Int, val category: String, val title: String, val price: String)
