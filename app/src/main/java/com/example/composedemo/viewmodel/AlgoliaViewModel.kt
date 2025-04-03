@@ -15,22 +15,16 @@ import com.algolia.search.model.IndexName
 
 
 class AlgoliaViewModel : ViewModel() {
-    var config: ConfigurationSearch = ConfigurationSearch(ApplicationID("JIE6P1H3VT"),APIKey("05787bab9b4dcc0a435e6ca951e3966d"),hosts = listOf(RetryableHost("uat-search.webuy.tools")))
+    private var config: ConfigurationSearch = ConfigurationSearch(ApplicationID("JIE6P1H3VT"),APIKey("05787bab9b4dcc0a435e6ca951e3966d"),hosts = listOf(RetryableHost("uat-search.webuy.tools")))
 
-   var client = ClientSearch(config)
+   private var client = ClientSearch(config)
 
-    val index = client.initIndex(IndexName("uat_dex_es_new_arrival_desc"))
+    private val index = client.initIndex(IndexName("uat_dex_es_new_arrival_desc"))
     val searcher = HitsSearcher(client,index.indexName)
     private val filters = filters {
     }
-
-    val filterState = FilterState(filters)
-
-    // Hits
-   // val hitsPaginator = Paginator(searcher) { it.deserialize(AlgoliaProduct) }
-
-
-    var connection = ConnectionHandler(searcher.connectFilterState(filterState))
+    private val filterState = FilterState(filters)
+    private var connection = ConnectionHandler(searcher.connectFilterState(filterState))
 
     override fun onCleared() {
         super.onCleared()

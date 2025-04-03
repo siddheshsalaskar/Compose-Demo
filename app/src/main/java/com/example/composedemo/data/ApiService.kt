@@ -9,8 +9,6 @@ import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface ApiService {
-    @GET("products")
-    suspend fun getProducts(): List<Product>
 
     @Headers("No-Authentication: true", "Cache-Control: no-cache")
     @GET("cms/content?platformId=5")

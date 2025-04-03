@@ -2,7 +2,6 @@ package com.example.composedemo
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -26,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModelProvider
 import coil.compose.rememberImagePainter
 import com.algolia.instantsearch.core.Callback
@@ -39,9 +37,6 @@ import com.example.composedemo.utils.Status
 import com.example.composedemo.viewmodel.AlgoliaViewModel
 import com.example.composedemo.viewmodel.BannerViewModel
 import com.example.composedemo.viewmodel.ViewModelFactory
-
-//import com.example.composedemo.ui.MainScreen
-//import com.example.composedemo.viewmodel.ProductViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -64,10 +59,7 @@ class MainActivity : ComponentActivity() {
         val callback: Callback<ResponseSearch?> = { response ->
 
             if (response?.nbHitsOrNull != null && response.nbHitsOrNull!! > 0) {
-
-                var x = response.hits.deserialize(AlgoliaProduct.serializer())
-//                var y:List<AlgoliaProduct> = x
-                productList = x
+                productList = response.hits.deserialize(AlgoliaProduct.serializer())
             }
         }
         viewModel.searcher.response.subscribe(callback)
@@ -78,12 +70,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MainScreen(products = productList, banners = bannerList)
-//            val viewModel: ProductViewModel = viewModel()
-//            MainScreen(viewModel)
         }
     }
 
-    fun getContents(): MutableList<String> {
+    private fun getContents(): MutableList<String> {
         return mutableListOf<String>().apply {
             add("site/homepage/sliders/1-slider-system/1-cta-url")
             add("site/homepage/sliders/1-slider-system/2-cta-url")
@@ -100,10 +90,9 @@ class MainActivity : ComponentActivity() {
                 when (resource.status) {
                     Status.LOADING -> {}
                     Status.SUCCESS -> {
-                        if (resource?.data?.body() != null && resource?.data?.body()?.response?.data != null) {
-                            var response = resource?.data?.body()?.response
-
-                            var contentList = response?.data?.contents
+                        if (resource.data?.body() != null && resource.data.body()?.response?.data != null) {
+                            val response = resource.data.body()?.response
+                            val contentList = response?.data?.contents
                             bannerList = getBannerListData(contentList)
                             Log.d("bannerList", bannerList.toString())
                         }
@@ -134,7 +123,7 @@ fun formImageURL(imageName: String): String {
 }
 
 fun getBannerListData(contentList: List<MainContent.ContentWrapper>?): MutableList<Banner> {
-    var bannerList: MutableList<Banner> = mutableListOf()
+    val bannerList: MutableList<Banner> = mutableListOf()
     if (contentList != null) {
         for (data in contentList) {
             if (data.contentKey.contains("site/homepage/sliders/1-slider-system/1-file-name")) {
@@ -155,9 +144,6 @@ fun getBannerListData(contentList: List<MainContent.ContentWrapper>?): MutableLi
     return bannerList
 }
 
-data class Product(val imageRes: Int, val category: String, val title: String, val price: String)
-
-
 @Composable
 fun MainScreen(products: List<AlgoliaProduct>, banners: List<Banner>) {
     LazyColumn(
@@ -168,33 +154,12 @@ fun MainScreen(products: List<AlgoliaProduct>, banners: List<Banner>) {
         item { NewArrivalsSection() }
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { ProductCarousel(products) }
-//        item { BannerCarousel() }
-//        item { Spacer(modifier = Modifier.height(16.dp)) }
-//        item { NewArrivalsSection() }
-//        item { Spacer(modifier = Modifier.height(16.dp)) }
-//        item { ProductCarousel() }
     }
-//    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-//        BannerCarousel()
-//        Spacer(modifier = Modifier.height(16.dp))
-//        NewArrivalsSection()
-//        Spacer(modifier = Modifier.height(16.dp))
-//        ProductCarousel()
-//        BannerCarousel()
-//        Spacer(modifier = Modifier.height(16.dp))
-//        NewArrivalsSection()
-//        Spacer(modifier = Modifier.height(16.dp))
-//        ProductCarousel()
-//    }
 }
 
 @Composable
 fun BannerCarousel(banners: List<Banner>) {
-//    val bannerImages = listOf(
-//        R.drawable.banner1, R.drawable.banner2, R.drawable.banner3
-//    )
     val pagerState = rememberPagerState(pageCount = { banners.size })
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -313,15 +278,6 @@ fun ProductCard(product: AlgoliaProduct) {
 
 @Composable
 fun ProductCarousel(products: List<AlgoliaProduct>) {
-//    val sampleProducts = listOf(
-//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
-//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
-//        Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850"),
-//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
-//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
-//        Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850")
-//    )
-
     LazyRow(modifier = Modifier.fillMaxWidth()) {
         items(products) { product ->
             ProductCard(product = product)
