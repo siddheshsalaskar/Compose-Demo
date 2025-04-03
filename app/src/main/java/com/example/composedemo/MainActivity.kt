@@ -2,6 +2,7 @@ package com.example.composedemo
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -25,7 +26,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModelProvider
+import coil.compose.rememberImagePainter
 import com.algolia.instantsearch.core.Callback
 import com.algolia.search.helper.deserialize
 import com.algolia.search.model.response.ResponseSearch
@@ -44,6 +47,8 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var bannerViewModel: BannerViewModel
     private lateinit var viewModel: AlgoliaViewModel
+    private var productList by mutableStateOf<List<AlgoliaProduct>>(emptyList())
+    private var bannerList by mutableStateOf<List<Banner>>(emptyList())
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,12 +61,13 @@ class MainActivity : ComponentActivity() {
         viewModel = ViewModelProvider(this)[AlgoliaViewModel::class.java]
 
         viewModel.searcher.searchAsync()
-        val callback : Callback<ResponseSearch?> = { response ->
+        val callback: Callback<ResponseSearch?> = { response ->
 
             if (response?.nbHitsOrNull != null && response.nbHitsOrNull!! > 0) {
 
                 var x = response.hits.deserialize(AlgoliaProduct.serializer())
-                var y:List<AlgoliaProduct> = x
+//                var y:List<AlgoliaProduct> = x
+                productList = x
             }
         }
         viewModel.searcher.response.subscribe(callback)
@@ -71,7 +77,7 @@ class MainActivity : ComponentActivity() {
         getBannersContents()
 
         setContent {
-            MainScreen()
+            MainScreen(products = productList, banners = bannerList)
 //            val viewModel: ProductViewModel = viewModel()
 //            MainScreen(viewModel)
         }
@@ -95,10 +101,11 @@ class MainActivity : ComponentActivity() {
                     Status.LOADING -> {}
                     Status.SUCCESS -> {
                         if (resource?.data?.body() != null && resource?.data?.body()?.response?.data != null) {
-                        var response = resource?.data?.body()?.response
+                            var response = resource?.data?.body()?.response
 
                             var contentList = response?.data?.contents
-                            val bannerList = getBannerListData(contentList)
+                            bannerList = getBannerListData(contentList)
+                            Log.d("bannerList", bannerList.toString())
                         }
 
                     }
@@ -113,38 +120,54 @@ class MainActivity : ComponentActivity() {
 
 }
 
+fun formImageURL(imageName: String): String {
+    val DOT = "."
+    var filename = ""
+    val ZERO = 0
+    val ONE = 1
+    if (!imageName.isNullOrEmpty()) {
+        val imgArray = imageName.split(DOT)
+        filename =
+            "https://uk.static.designerexchange.com/content_images/sliders/" + imgArray[ZERO] + "." + imgArray[ONE]
+    }
+    return filename.trim()
+}
+
 fun getBannerListData(contentList: List<MainContent.ContentWrapper>?): MutableList<Banner> {
-    var bannerList:MutableList<Banner> = mutableListOf()
+    var bannerList: MutableList<Banner> = mutableListOf()
     if (contentList != null) {
         for (data in contentList) {
-            if(data.contentKey.contains("site/homepage/sliders/1-slider-system/1-file-name")) {
-                bannerList.add(Banner(data.content,data.contentKey))
+            if (data.contentKey.contains("site/homepage/sliders/1-slider-system/1-file-name")) {
+                val banner1 = formImageURL(data.content)
+                bannerList.add(Banner(banner1, data.contentKey))
             }
-            if(data.contentKey.contains("site/homepage/sliders/1-slider-system/2-file-name")) {
-                bannerList.add(Banner(data.content,data.contentKey))
+            if (data.contentKey.contains("site/homepage/sliders/1-slider-system/2-file-name")) {
+                val banner2 = formImageURL(data.content)
+                bannerList.add(Banner(banner2, data.contentKey))
             }
-            if(data.contentKey.contains("site/homepage/sliders/1-slider-system/3-file-name")) {
-                bannerList.add(Banner(data.content,data.contentKey))
+            if (data.contentKey.contains("site/homepage/sliders/1-slider-system/3-file-name")) {
+                val banner3 = formImageURL(data.content)
+                bannerList.add(Banner(banner3, data.contentKey))
             }
         }
         return bannerList
     }
-   return bannerList
+    return bannerList
 }
 
 data class Product(val imageRes: Int, val category: String, val title: String, val price: String)
 
 
 @Composable
-fun MainScreen() {
+fun MainScreen(products: List<AlgoliaProduct>, banners: List<Banner>) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        item { BannerCarousel() }
+        item { BannerCarousel(banners) }
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { NewArrivalsSection() }
         item { Spacer(modifier = Modifier.height(16.dp)) }
-        item { ProductCarousel() }
+        item { ProductCarousel(products) }
 //        item { BannerCarousel() }
 //        item { Spacer(modifier = Modifier.height(16.dp)) }
 //        item { NewArrivalsSection() }
@@ -166,11 +189,11 @@ fun MainScreen() {
 }
 
 @Composable
-fun BannerCarousel() {
-    val bannerImages = listOf(
-        R.drawable.banner1, R.drawable.banner2, R.drawable.banner3
-    )
-    val pagerState = rememberPagerState(pageCount = { bannerImages.size })
+fun BannerCarousel(banners: List<Banner>) {
+//    val bannerImages = listOf(
+//        R.drawable.banner1, R.drawable.banner2, R.drawable.banner3
+//    )
+    val pagerState = rememberPagerState(pageCount = { banners.size })
 
     Box(
         modifier = Modifier
@@ -179,7 +202,7 @@ fun BannerCarousel() {
     ) {
         HorizontalPager(state = pagerState) { page ->
             Image(
-                painter = painterResource(id = bannerImages[page]),
+                painter = rememberImagePainter(data = banners[page].content),
                 contentDescription = "Banner Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
@@ -192,7 +215,7 @@ fun BannerCarousel() {
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
         ) {
-            repeat(bannerImages.size) { index ->
+            repeat(banners.size) { index ->
                 val color = if (pagerState.currentPage == index) Color.Black else Color.LightGray
                 Box(
                     modifier = Modifier
@@ -221,12 +244,13 @@ fun NewArrivalsSection() {
 }
 
 @Composable
-fun ProductCard(product: Product) {
+fun ProductCard(product: AlgoliaProduct) {
     var isWishlisted by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .width(200.dp)
+            .height(400.dp)
             .padding(8.dp),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
@@ -245,7 +269,7 @@ fun ProductCard(product: Product) {
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = product.imageRes),
+                    painter = rememberImagePainter(data = product.imageUrls?.medium),
                     contentDescription = null,
                     modifier = Modifier.size(160.dp),
                     contentScale = ContentScale.Fit
@@ -262,18 +286,22 @@ fun ProductCard(product: Product) {
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = product.category, fontSize = 14.sp, color = Color.Gray)
+            Text(
+                text = product.superCatFriendlyName.toString(),
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = product.title,
+                text = product.boxName.toString(),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = product.price,
+                text = "£${product.sellPrice}",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color(0xFF006D5B),
@@ -284,18 +312,18 @@ fun ProductCard(product: Product) {
 }
 
 @Composable
-fun ProductCarousel() {
-    val sampleProducts = listOf(
-        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
-        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
-        Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850"),
-        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
-        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
-        Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850")
-    )
+fun ProductCarousel(products: List<AlgoliaProduct>) {
+//    val sampleProducts = listOf(
+//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
+//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
+//        Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850"),
+//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS S", "£650"),
+//        Product(R.drawable.tshirt, "COATS", "MAX MARA BELTED JACKET - SIZE WOMENS 12", "£795"),
+//        Product(R.drawable.tshirt, "COATS", "MAX MARA CLASSIC COAT - SIZE WOMENS 10", "£850")
+//    )
 
     LazyRow(modifier = Modifier.fillMaxWidth()) {
-        items(sampleProducts) { product ->
+        items(products) { product ->
             ProductCard(product = product)
         }
     }
@@ -304,5 +332,5 @@ fun ProductCarousel() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewMainScreen() {
-    MainScreen()
+    MainScreen(products = emptyList(), banners = emptyList())
 }

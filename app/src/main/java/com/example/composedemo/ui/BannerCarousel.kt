@@ -22,7 +22,7 @@ fun BannerCarousel(banners: List<Banner>) {
     ) {
         HorizontalPager(state = pagerState) { page ->
             Image(
-                painter = rememberImagePainter(banners[page].imageUrl),
+                painter = rememberImagePainter(banners[page].content),
                 contentDescription = "Banner Image",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
