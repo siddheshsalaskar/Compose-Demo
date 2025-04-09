@@ -21,7 +21,7 @@ fun MainScreen(
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        item { SearchBar() }
+       // item { SearchBar() }
         item { BannerCarousel(banners) }
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { NewArrivalsSection() }
