@@ -63,6 +63,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
+    implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
     implementation("io.coil-kt:coil-compose:2.4.0")
@@ -71,11 +72,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
     implementation("androidx.lifecycle:lifecycle-common:2.8.3")
     //Algolia
-    implementation ("com.algolia:instantsearch-android:3.1.2")
-    implementation ("com.algolia:instantsearch-android-paging3:3.0.0")
-    implementation ("com.algolia:instantsearch-android-loading:3.0.0")
-    implementation ("com.algolia:instantsearch-insights-android:3.1.3")
+    implementation("com.algolia:instantsearch-android:3.1.2")
+    implementation("com.algolia:instantsearch-android-paging3:3.0.0")
+    implementation("com.algolia:instantsearch-android-loading:3.0.0")
+    implementation("com.algolia:instantsearch-insights-android:3.1.3")
 
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 
 }

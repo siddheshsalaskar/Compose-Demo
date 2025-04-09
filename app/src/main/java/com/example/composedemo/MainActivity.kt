@@ -8,8 +8,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.algolia.instantsearch.core.Callback
 import com.algolia.search.helper.deserialize
 import com.algolia.search.model.response.ResponseSearch
@@ -17,7 +22,9 @@ import com.example.composedemo.model.AlgoliaProduct
 import com.example.composedemo.model.Banner
 import com.example.composedemo.model.MainContent
 import com.example.composedemo.ui.BottomNavigationBar
+import com.example.composedemo.ui.CustomTopAppBar
 import com.example.composedemo.ui.MainScreen
+import com.example.composedemo.ui.drawer.CustomDrawerContent
 import com.example.composedemo.utils.Status
 import com.example.composedemo.viewmodel.AlgoliaViewModel
 import com.example.composedemo.viewmodel.BannerViewModel
@@ -38,6 +45,7 @@ class MainActivity : ComponentActivity() {
     private var bannerList by mutableStateOf<List<Banner>>(emptyList())
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -62,46 +70,103 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             var selectedItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.Home) }
+            val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-            Scaffold(
-                bottomBar = {
-                    BottomNavigationBar(
-                        selectedItem = selectedItem,
-                        onItemSelected = { selectedItem = it }
-                    )
+            val productId = navBackStackEntry?.arguments?.getString("productId")
+            val currentBackStackEntry = navController.currentBackStackEntryAsState().value
+            val currentRoute = currentBackStackEntry?.destination?.route
+            val isOnProductDetail = currentRoute?.startsWith("productDetail") == true
+
+            val title = when {
+                productId != null -> "BoxID: $productId"
+                else -> when (selectedItem) {
+                    is BottomNavItem.Home -> "Home"
+                    is BottomNavItem.Favourites -> "Favourites"
+                    is BottomNavItem.Basket -> "Basket"
+                    is BottomNavItem.Account -> "Account"
                 }
-            ) { innerPadding ->
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    when (selectedItem) {
-                        is BottomNavItem.Home -> MainScreen(
-                            products = productList,
-                            banners = bannerList
-                        )
+            }
 
-                        is BottomNavItem.Favourites -> Text(
-                            "Favourites Screen",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .wrapContentSize()
-                        )
+            val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
 
-                        is BottomNavItem.Basket -> Text(
-                            "Basket Screen",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .wrapContentSize()
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    CustomDrawerContent {
+//                        scope.launch { drawerState.close() }
+                    }
+                }
+            ) {
+                Scaffold(
+                    topBar = {
+                        CustomTopAppBar(
+                            title = title,
+                            isOnProductDetail = isOnProductDetail,
+                            drawerState = drawerState,
+                            scope = scope
                         )
+                    },
+                    bottomBar = {
+                        BottomNavigationBar(
+                            selectedItem = selectedItem,
+                            onItemSelected = { selectedItem = it }
+                        )
+                    }
+                ) { innerPadding ->
+                    Box(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        when (selectedItem) {
+                            is BottomNavItem.Home -> NavHost(
+                                navController = navController,
+                                startDestination = "home"
+                            ) {
+                                composable("home") {
+                                    MainScreen(
+                                        products = productList,
+                                        banners = bannerList,
+                                        onProductClick = { productId ->
+                                            navController.navigate("productDetail/$productId")
+                                        }
+                                    )
+                                }
+                                composable(
+                                    "productDetail/{productId}",
+                                    arguments = listOf(navArgument("productId") {
+                                        type = NavType.StringType
+                                    })
+                                ) {
+//                                backStackEntry ->
+//                                    val productId = backStackEntry.arguments?.getString("productId")
+//                                    ProductDetailScreen(productId = productId ?: "Unknown")
+                                }
+                            }
 
-                        is BottomNavItem.Account -> Text(
-                            "Account Screen",
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .wrapContentSize()
-                        )
+                            is BottomNavItem.Favourites -> Text(
+                                "Favourites Screen",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize()
+                            )
+
+                            is BottomNavItem.Basket -> Text(
+                                "Basket Screen",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize()
+                            )
+
+                            is BottomNavItem.Account -> Text(
+                                "Account Screen",
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize()
+                            )
+                        }
                     }
                 }
             }
@@ -179,8 +244,8 @@ fun getBannerListData(contentList: List<MainContent.ContentWrapper>?): MutableLi
     return bannerList
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewMainScreen() {
-    MainScreen(products = emptyList(), banners = emptyList())
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewMainScreen() {
+//    MainScreen(products = emptyList(), banners = emptyList())
+//}

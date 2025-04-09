@@ -8,10 +8,10 @@ import androidx.compose.ui.Modifier
 import com.example.composedemo.model.AlgoliaProduct
 
 @Composable
-fun ProductCarousel(products: List<AlgoliaProduct>) {
+fun ProductCarousel(products: List<AlgoliaProduct>, onProductClick: (String) -> Unit) {
     LazyRow(modifier = Modifier.fillMaxWidth()) {
         items(products) { product ->
-            ProductCard(product = product)
+            ProductCard(product = product, onClick = { onProductClick(product.boxId.toString()) })
         }
     }
 }

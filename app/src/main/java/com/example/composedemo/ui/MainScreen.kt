@@ -11,7 +11,11 @@ import com.example.composedemo.model.AlgoliaProduct
 import com.example.composedemo.model.Banner
 
 @Composable
-fun MainScreen(products: List<AlgoliaProduct>, banners: List<Banner>) {
+fun MainScreen(
+    products: List<AlgoliaProduct>,
+    banners: List<Banner>,
+    onProductClick: (String) -> Unit
+) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -19,6 +23,6 @@ fun MainScreen(products: List<AlgoliaProduct>, banners: List<Banner>) {
         item { Spacer(modifier = Modifier.height(16.dp)) }
         item { NewArrivalsSection() }
         item { Spacer(modifier = Modifier.height(16.dp)) }
-        item { ProductCarousel(products) }
+        item { ProductCarousel(products, onProductClick) }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.composedemo.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,14 +35,15 @@ import com.example.composedemo.R
 import com.example.composedemo.model.AlgoliaProduct
 
 @Composable
-fun ProductCard(product: AlgoliaProduct) {
+fun ProductCard(product: AlgoliaProduct, onClick: () -> Unit) {
     var isWishlisted by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .width(200.dp)
             .height(400.dp)
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5)),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
