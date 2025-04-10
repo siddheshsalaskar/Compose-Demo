@@ -5,19 +5,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.composedemo.ui.theme.SearchBar
+import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -25,9 +21,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun CustomTopAppBar(
     title: String,
-    isOnProductDetail: Boolean,
+    showDrawerIcon: Boolean,
+    showSearchBar: Boolean = true,
     drawerState: DrawerState,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    navController: NavController
 ) {
     Column {
         CenterAlignedTopAppBar(
@@ -39,7 +37,7 @@ fun CustomTopAppBar(
                 )
             },
             navigationIcon = {
-                if (!isOnProductDetail) {
+                if (showDrawerIcon) {
                     IconButton(onClick = {
                         scope.launch {
                             drawerState.open()
@@ -57,15 +55,16 @@ fun CustomTopAppBar(
                 containerColor = Color(0xFF00685E)
             )
         )
-        SearchBar()
+        if (showSearchBar) {
+            SearchBar(navController)
+        }
     }
 }
 
-@Preview
-@Composable
-fun test ()
-{
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    CustomTopAppBar("test",false,drawerState,scope)
-}
+//@Preview
+//@Composable
+//fun test() {
+//    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+//    val scope = rememberCoroutineScope()
+//    CustomTopAppBar("test", false, true, drawerState, scope)
+//}

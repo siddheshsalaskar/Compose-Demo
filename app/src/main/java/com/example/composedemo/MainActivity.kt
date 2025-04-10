@@ -24,6 +24,7 @@ import com.example.composedemo.model.MainContent
 import com.example.composedemo.ui.BottomNavigationBar
 import com.example.composedemo.ui.CustomTopAppBar
 import com.example.composedemo.ui.MainScreen
+import com.example.composedemo.ui.SearchResultsScreen
 import com.example.composedemo.ui.drawer.CustomDrawerContent
 import com.example.composedemo.utils.Status
 import com.example.composedemo.viewmodel.AlgoliaViewModel
@@ -54,7 +55,6 @@ class MainActivity : ComponentActivity() {
             ViewModelFactory()
         )[BannerViewModel::class.java]
         viewModel = ViewModelProvider(this)[AlgoliaViewModel::class.java]
-
         viewModel.searcher.searchAsync()
         val callback: Callback<ResponseSearch?> = { response ->
 
@@ -77,8 +77,10 @@ class MainActivity : ComponentActivity() {
             val currentBackStackEntry = navController.currentBackStackEntryAsState().value
             val currentRoute = currentBackStackEntry?.destination?.route
             val isOnProductDetail = currentRoute?.startsWith("productDetail") == true
+            val isOnSearchResults = currentRoute?.startsWith("searchResults") == true
 
             val title = when {
+                isOnSearchResults -> ""
                 productId != null -> "BoxID: $productId"
                 else -> when (selectedItem) {
                     is BottomNavItem.Home -> "Home"
@@ -103,9 +105,10 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         CustomTopAppBar(
                             title = title,
-                            isOnProductDetail = isOnProductDetail,
+                            showDrawerIcon = !isOnProductDetail && !isOnSearchResults,
                             drawerState = drawerState,
-                            scope = scope
+                            scope = scope,
+                            navController = navController
                         )
                     },
                     bottomBar = {
@@ -133,6 +136,15 @@ class MainActivity : ComponentActivity() {
                                             navController.navigate("productDetail/$productId")
                                         }
                                     )
+                                }
+                                composable(
+                                    "searchResults/{query}",
+                                    arguments = listOf(navArgument("query") {
+                                        type = NavType.StringType
+                                    })
+                                ) { backStackEntry ->
+                                    val query = backStackEntry.arguments?.getString("query") ?: ""
+                                    SearchResultsScreen(query = query)
                                 }
                                 composable(
                                     "productDetail/{productId}",
