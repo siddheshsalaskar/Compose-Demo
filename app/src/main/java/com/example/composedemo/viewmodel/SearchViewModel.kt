@@ -25,7 +25,7 @@ class SearchViewModel : ViewModel() {
 
     private var client = ClientSearch(config)
 
-    private val index = client.initIndex(IndexName("uat_dex_es_new_arrival_desc"))
+    private val index = client.initIndex(IndexName("uat_dex_uk"))
     val searcher = HitsSearcher(client, index.indexName)
     private val filters = filters {
     }
