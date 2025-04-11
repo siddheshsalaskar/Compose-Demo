@@ -81,7 +81,7 @@ fun SearchResultsScreen(query: String, viewModel: SearchViewModel = viewModel())
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(results) { product ->
-                    ProductCard(product = product) {}
+                    ProductCard(product = product,isList = true) {}
                 }
             }
         }

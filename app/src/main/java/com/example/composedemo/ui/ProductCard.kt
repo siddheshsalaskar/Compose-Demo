@@ -35,12 +35,19 @@ import com.example.composedemo.R
 import com.example.composedemo.model.AlgoliaProduct
 
 @Composable
-fun ProductCard(product: AlgoliaProduct, onClick: () -> Unit) {
+fun ProductCard(product: AlgoliaProduct,isList: Boolean = false, onClick: () -> Unit) {
     var isWishlisted by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier
-            .width(200.dp)
+        modifier = if (isList)
+            Modifier
+            .fillMaxWidth()
+            .height(400.dp)
+            .padding(8.dp)
+            .clickable { onClick() }
+        else
+                Modifier
+                    .width(200.dp)
             .height(400.dp)
             .padding(8.dp)
             .clickable { onClick() },
