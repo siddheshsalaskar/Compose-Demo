@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.example.composedemo.ui.search.SearchBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

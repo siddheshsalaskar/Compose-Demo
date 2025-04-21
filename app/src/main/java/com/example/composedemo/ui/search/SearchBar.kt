@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.search
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

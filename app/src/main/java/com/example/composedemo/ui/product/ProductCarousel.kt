@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.product
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
@@ -11,7 +11,9 @@ import com.example.composedemo.model.AlgoliaProduct
 fun ProductCarousel(products: List<AlgoliaProduct>, onProductClick: (String) -> Unit) {
     LazyRow(modifier = Modifier.fillMaxWidth()) {
         items(products) { product ->
-            ProductCard(product = product, onClick = { onProductClick(product.boxId.toString()) })
+            ProductGridCard(
+                product = product,
+                onClick = { onProductClick(product.boxId.toString()) })
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.composedemo.model.AlgoliaProduct
 import com.example.composedemo.model.Banner
+import com.example.composedemo.ui.product.ProductCarousel
 
 @Composable
 fun MainScreen(

@@ -24,7 +24,7 @@ import com.example.composedemo.model.MainContent
 import com.example.composedemo.ui.BottomNavigationBar
 import com.example.composedemo.ui.CustomTopAppBar
 import com.example.composedemo.ui.MainScreen
-import com.example.composedemo.ui.SearchResultsScreen
+import com.example.composedemo.ui.search.SearchResultsScreen
 import com.example.composedemo.ui.drawer.CustomDrawerContent
 import com.example.composedemo.utils.Status
 import com.example.composedemo.viewmodel.AlgoliaViewModel
@@ -112,10 +112,17 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     bottomBar = {
-                        BottomNavigationBar(
-                            selectedItem = selectedItem,
-                            onItemSelected = { selectedItem = it }
-                        )
+                        if (
+                            currentRoute == "home" ||
+                            currentRoute == "favourites" ||
+                            currentRoute == "basket" ||
+                            currentRoute == "account"
+                        ) {
+                            BottomNavigationBar(
+                                selectedItem = selectedItem,
+                                onItemSelected = { selectedItem = it }
+                            )
+                        }
                     }
                 ) { innerPadding ->
                     Box(
@@ -158,7 +165,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
 
-                            is BottomNavItem.Favourites -> Text(
+                            is BottomNavItem.Favourites ->
+                            Text(
                                 "Favourites Screen",
                                 modifier = Modifier
                                     .fillMaxSize()

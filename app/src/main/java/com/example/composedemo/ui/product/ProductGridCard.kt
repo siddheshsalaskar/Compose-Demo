@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.product
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -35,7 +35,7 @@ import com.example.composedemo.R
 import com.example.composedemo.model.AlgoliaProduct
 
 @Composable
-fun ProductCard(product: AlgoliaProduct, onClick: () -> Unit) {
+fun ProductGridCard(product: AlgoliaProduct, onClick: () -> Unit) {
     var isWishlisted by remember { mutableStateOf(false) }
 
     Card(
