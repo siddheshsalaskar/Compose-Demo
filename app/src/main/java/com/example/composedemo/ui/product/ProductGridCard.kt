@@ -1,4 +1,4 @@
-package com.example.composedemo.ui
+package com.example.composedemo.ui.product
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

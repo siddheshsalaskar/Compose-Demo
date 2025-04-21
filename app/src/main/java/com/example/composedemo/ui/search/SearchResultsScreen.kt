@@ -20,7 +20,7 @@ import com.example.composedemo.model.AlgoliaProduct
 import com.example.composedemo.ui.FilterBottomSheetContent
 import com.example.composedemo.ui.FloatingFilterSortBar
 import com.example.composedemo.ui.SortBottomSheetContent
-import com.example.composedemo.ui.product.ProductGridCard
+import com.example.composedemo.ui.product.ProductCard
 import com.example.composedemo.ui.product.ProductListCard
 import com.example.composedemo.viewmodel.SearchViewModel
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +86,7 @@ fun SearchResultsScreen(query: String, viewModel: SearchViewModel = viewModel())
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(results.size) { index ->
-                        ProductGridCard(product = results[index]) {}
+                        ProductCard(product = results[index]) {}
                     }
                 }
             } else {

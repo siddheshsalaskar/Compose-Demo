@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.algolia.search.helper.deserialize
 import com.example.composedemo.model.AlgoliaProduct
+import com.example.composedemo.ui.product.ProductCard
 import com.example.composedemo.viewmodel.SearchViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
